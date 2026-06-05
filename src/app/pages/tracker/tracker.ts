@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, AfterViewInit, signal } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
@@ -65,27 +65,8 @@ export class Tracker implements AfterViewInit, OnDestroy {
   loadFlights() {
     this.loading.set(true);
     this.error.set('');
-    const headers = environment.openskyUsername
-      ? new HttpHeaders({ Authorization: 'Basic ' + btoa(`${environment.openskyUsername}:${environment.openskyPassword}`) })
-      : new HttpHeaders();
-    this.http.get<any>('https://opensky-network.org/api/states/all', { headers }).subscribe({
-      next: (resp) => {
-        const states: any[] = resp.states ?? [];
-        const flights: RealFlight[] = states
-          .filter((s: any) => s[1]?.trim() && s[5] !== null && s[6] !== null && !s[8])
-          .slice(0, 300)
-          .map((s: any) => ({
-            icao24:        s[0],
-            callsign:      s[1].trim(),
-            originCountry: s[2],
-            longitude:     s[5],
-            latitude:      s[6],
-            altitude:      s[7] ? Math.round(s[7] * 3.281) : 0,
-            onGround:      s[8],
-            velocity:      s[9] ? Math.round(s[9] * 1.944) : 0,
-            heading:       s[10] ?? 0,
-            verticalRate:  s[11] ?? 0,
-          }));
+    this.http.get<RealFlight[]>(environment.trackerUrl).subscribe({
+      next: (flights) => {
         this.flights.set(flights);
         this.renderMarkers(flights);
         this.loading.set(false);
