@@ -1,34 +1,17 @@
 export const config = { runtime: 'edge' };
 
-async function fetchRegion(url) {
-  try {
-    const resp = await fetch(url);
-    if (!resp.ok) return [];
-    const ct = resp.headers.get('content-type') ?? '';
-    if (!ct.includes('application/json')) return [];
-    const data = await resp.json();
-    return data.ac ?? [];
-  } catch {
-    return [];
-  }
-}
-
 export default async function handler() {
   try {
-    const [na, eu, as] = await Promise.all([
-      fetchRegion('https://api.airplanes.live/v2/point/45/-90/2500'),
-      fetchRegion('https://api.airplanes.live/v2/point/50/15/2500'),
-      fetchRegion('https://api.airplanes.live/v2/point/30/100/2500'),
-    ]);
+    const resp = await fetch('https://api.adsb.lol/v2/ladd');
+    if (!resp.ok) return new Response('[]', { headers: { 'Content-Type': 'application/json' } });
 
-    const seen = new Set();
-    const flights = [];
+    const data = await resp.json();
+    const aircraft = data.ac ?? [];
 
-    for (const a of [...na, ...eu, ...as]) {
-      if (!a.flight?.trim() || a.lon == null || a.lat == null || a.ground) continue;
-      if (seen.has(a.hex)) continue;
-      seen.add(a.hex);
-      flights.push({
+    const flights = aircraft
+      .filter(a => a.flight?.trim() && a.lon != null && a.lat != null && !a.ground)
+      .slice(0, 300)
+      .map(a => ({
         icao24:        a.hex,
         callsign:      a.flight.trim(),
         originCountry: a.r ?? '',
@@ -39,9 +22,7 @@ export default async function handler() {
         velocity:      a.gs ? Math.round(a.gs) : 0,
         heading:       a.track ?? 0,
         verticalRate:  a.baro_rate ?? 0,
-      });
-      if (flights.length >= 500) break;
-    }
+      }));
 
     return new Response(JSON.stringify(flights), {
       headers: { 'Content-Type': 'application/json' },
