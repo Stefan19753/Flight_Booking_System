@@ -13,7 +13,8 @@ export default async function handler() {
     });
 
     if (!resp.ok) {
-      return new Response('[]', { headers: { 'Content-Type': 'application/json' } });
+      const text = await resp.text();
+      return new Response(JSON.stringify({ error: resp.status, body: text }), { headers: { 'Content-Type': 'application/json' } });
     }
 
     const data = await resp.json();
@@ -38,7 +39,7 @@ export default async function handler() {
     return new Response(JSON.stringify(flights), {
       headers: { 'Content-Type': 'application/json' },
     });
-  } catch {
-    return new Response('[]', { headers: { 'Content-Type': 'application/json' } });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: String(err) }), { headers: { 'Content-Type': 'application/json' } });
   }
 }
