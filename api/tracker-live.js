@@ -2,33 +2,39 @@ export const config = { runtime: 'edge' };
 
 export default async function handler() {
   try {
-    const resp = await fetch('https://opensky-network.org/api/states/all');
+    const regions = [
+      'https://api.airplanes.live/v2/point/45/-90/2500',
+      'https://api.airplanes.live/v2/point/50/15/2500',
+      'https://api.airplanes.live/v2/point/30/100/2500',
+    ];
 
-    if (!resp.ok) {
-      const text = await resp.text();
-      return new Response(JSON.stringify({ error: resp.status, body: text }), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+    const responses = await Promise.all(regions.map(url => fetch(url)));
+    const jsons = await Promise.all(responses.map(r => r.json()));
+
+    const seen = new Set();
+    const flights = [];
+
+    for (const data of jsons) {
+      for (const a of (data.ac ?? [])) {
+        if (!a.flight?.trim() || a.lon == null || a.lat == null || a.ground) continue;
+        if (seen.has(a.hex)) continue;
+        seen.add(a.hex);
+        flights.push({
+          icao24:        a.hex,
+          callsign:      a.flight.trim(),
+          originCountry: a.r ?? '',
+          longitude:     a.lon,
+          latitude:      a.lat,
+          altitude:      a.alt_baro ? Math.round(a.alt_baro) : 0,
+          onGround:      false,
+          velocity:      a.gs ? Math.round(a.gs) : 0,
+          heading:       a.track ?? 0,
+          verticalRate:  a.baro_rate ?? 0,
+        });
+        if (flights.length >= 500) break;
+      }
+      if (flights.length >= 500) break;
     }
-
-    const data = await resp.json();
-    const states = data.states ?? [];
-
-    const flights = states
-      .filter(s => s[1]?.trim() && s[5] !== null && s[6] !== null && !s[8])
-      .slice(0, 300)
-      .map(s => ({
-        icao24:        s[0],
-        callsign:      s[1].trim(),
-        originCountry: s[2],
-        longitude:     s[5],
-        latitude:      s[6],
-        altitude:      s[7] ? Math.round(s[7] * 3.281) : 0,
-        onGround:      s[8],
-        velocity:      s[9] ? Math.round(s[9] * 1.944) : 0,
-        heading:       s[10] ?? 0,
-        verticalRate:  s[11] ?? 0,
-      }));
 
     return new Response(JSON.stringify(flights), {
       headers: { 'Content-Type': 'application/json' },
