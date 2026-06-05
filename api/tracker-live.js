@@ -2,26 +2,26 @@ export const config = { runtime: 'edge' };
 
 export default async function handler() {
   try {
-    const resp = await fetch('https://api.adsb.lol/v2/ladd');
+    const resp = await fetch('https://data.vatsim.net/v3/vatsim-data.json');
     if (!resp.ok) return new Response('[]', { headers: { 'Content-Type': 'application/json' } });
 
     const data = await resp.json();
-    const aircraft = data.ac ?? [];
+    const pilots = data.pilots ?? [];
 
-    const flights = aircraft
-      .filter(a => a.flight?.trim() && a.lon != null && a.lat != null && !a.ground)
-      .slice(0, 300)
-      .map(a => ({
-        icao24:        a.hex,
-        callsign:      a.flight.trim(),
-        originCountry: a.r ?? '',
-        longitude:     a.lon,
-        latitude:      a.lat,
-        altitude:      a.alt_baro ? Math.round(a.alt_baro) : 0,
+    const flights = pilots
+      .filter(p => p.callsign && p.groundspeed > 50)
+      .slice(0, 500)
+      .map(p => ({
+        icao24:        p.callsign.toLowerCase(),
+        callsign:      p.callsign,
+        originCountry: p.flight_plan?.departure?.slice(0, 2) ?? '',
+        longitude:     p.longitude,
+        latitude:      p.latitude,
+        altitude:      p.altitude,
         onGround:      false,
-        velocity:      a.gs ? Math.round(a.gs) : 0,
-        heading:       a.track ?? 0,
-        verticalRate:  a.baro_rate ?? 0,
+        velocity:      p.groundspeed,
+        heading:       p.heading,
+        verticalRate:  0,
       }));
 
     return new Response(JSON.stringify(flights), {
