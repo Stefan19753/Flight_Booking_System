@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://YOUR_BACKEND.vercel.app/api'
+  apiUrl: 'https://flight-booking-backend-gilt.vercel.app/api'
 };
