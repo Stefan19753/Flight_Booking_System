@@ -1,0 +1,370 @@
+.flights-page {
+  min-height: calc(100vh - 64px);
+  background: #f0f4f8;
+}
+
+.success-banner {
+  background: #dcfce7;
+  border-bottom: 1px solid #86efac;
+  color: #166534;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #166534;
+  font-size: 1rem;
+}
+
+.flights-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Sidebar */
+.sidebar-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 80px;
+}
+
+.sidebar-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 0.3rem;
+}
+
+select, input[type="date"], input[type="number"] {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+select:focus, input:focus {
+  border-color: #003580;
+}
+
+.btn-update {
+  width: 100%;
+  padding: 0.6rem;
+  background: #003580;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.25rem;
+}
+
+.btn-update:hover {
+  background: #002766;
+}
+
+.sort-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+/* Results */
+.results-header {
+  margin-bottom: 1.25rem;
+}
+
+.results-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.results-header p {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+/* Flight Card */
+.flight-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  border: 2px solid transparent;
+}
+
+.flight-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+.flight-card.booked {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.flight-airline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.airline-badge {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #003580, #009fe3);
+  color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.airline-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.flight-number {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Times */
+.flight-times {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.time-block {
+  text-align: center;
+  min-width: 60px;
+}
+
+.time {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.city-code {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+.flight-path {
+  flex: 1;
+  text-align: center;
+}
+
+.duration {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 0.2rem;
+}
+
+.path-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #003580;
+}
+
+.line {
+  flex: 1;
+  height: 1.5px;
+  background: #d1d5db;
+  max-width: 60px;
+}
+
+.stop-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 0 1.5px #f59e0b;
+}
+
+.plane-icon {
+  font-size: 1rem;
+  color: #003580;
+}
+
+.stops-label {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.2rem;
+}
+
+/* Price */
+.flight-price {
+  text-align: right;
+  min-width: 130px;
+}
+
+.price {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #003580;
+}
+
+.price-note {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-top: 0.1rem;
+}
+
+.seats-left {
+  font-size: 0.78rem;
+  color: #ef4444;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.cart-banner {
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-cart {
+  padding: 0.5rem 0.75rem;
+  background: #eff6ff;
+  color: #003580;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex: 1;
+}
+
+.btn-cart:hover { background: #dbeafe; }
+
+.btn-book {
+  padding: 0.55rem 1.25rem;
+  background: #fcd12a;
+  color: #003580;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  display: block;
+  width: 100%;
+}
+
+.btn-book:hover {
+  background: #f5c600;
+  transform: translateY(-1px);
+}
+
+.booked-label {
+  display: inline-block;
+  background: #dcfce7;
+  color: #166534;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .flights-layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    order: -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .flight-card {
+    grid-template-columns: 1fr;
+  }
+  .flight-price {
+    text-align: left;
+  }
+}

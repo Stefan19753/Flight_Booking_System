@@ -1,0 +1,95 @@
+<div class="cart-page">
+  <div class="cart-header">
+    <h1>&#128722; Your Cart</h1>
+    <p>Review your selected flights before booking</p>
+  </div>
+
+  <div class="cart-container">
+    @if (successMsg) {
+      <div class="success-box">
+        <div class="success-icon">&#10003;</div>
+        <h3>Booking Complete!</h3>
+        <p>{{ successMsg }}</p>
+        <a routerLink="/my-bookings" class="btn-view-bookings">View My Bookings</a>
+      </div>
+    } @else {
+
+      @if (errorMsg) {
+        <div class="error-box">{{ errorMsg }}</div>
+      }
+
+      @if (cartService.items().length === 0) {
+        <div class="empty-cart">
+          <div class="empty-icon">&#128722;</div>
+          <h3>Your cart is empty</h3>
+          <p>Find a flight and add it to your cart.</p>
+          <a routerLink="/home" class="btn-search">Search Flights</a>
+        </div>
+      } @else {
+        <div class="cart-layout">
+          <!-- Items -->
+          <div class="cart-items">
+            @for (item of cartService.items(); track item.id) {
+              <div class="cart-item">
+                <div class="item-route">
+                  <div class="city-block">
+                    <div class="city-code">{{ item.origin_code }}</div>
+                    <div class="city-name">{{ item.origin_city }}</div>
+                    <div class="time">{{ item.departure_time }}</div>
+                  </div>
+                  <div class="route-middle">
+                    <div class="fn-badge">{{ item.flight_number }}</div>
+                    <div class="route-line">&#9992;</div>
+                    <div class="duration">{{ item.duration }}</div>
+                  </div>
+                  <div class="city-block right">
+                    <div class="city-code">{{ item.destination_code }}</div>
+                    <div class="city-name">{{ item.destination_city }}</div>
+                    <div class="time">{{ item.arrival_time }}</div>
+                  </div>
+                </div>
+
+                <div class="item-footer">
+                  <div class="item-meta">
+                    <span class="airline-tag">{{ item.airline }}</span>
+                    <span class="pax-tag">{{ item.passengers }} pax</span>
+                  </div>
+                  <div class="item-right">
+                    <span class="item-price">${{ item.price | number:'1.2-2' }}</span>
+                    <button class="btn-remove" (click)="remove(item.id)">&#10005; Remove</button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Summary -->
+          <div class="cart-summary">
+            <h3>Order Summary</h3>
+            <div class="summary-rows">
+              @for (item of cartService.items(); track item.id) {
+                <div class="summary-row">
+                  <span>{{ item.origin_code }} → {{ item.destination_code }}</span>
+                  <span>${{ item.price | number:'1.2-2' }}</span>
+                </div>
+              }
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-total">
+              <span>Total</span>
+              <span>${{ cartService.total() | number:'1.2-2' }}</span>
+            </div>
+            <button
+              class="btn-checkout"
+              (click)="checkout()"
+              [disabled]="checkingOut"
+            >
+              {{ checkingOut ? 'Processing...' : 'Confirm & Book All' }}
+            </button>
+            <a routerLink="/home" class="btn-continue">&#8592; Continue Shopping</a>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

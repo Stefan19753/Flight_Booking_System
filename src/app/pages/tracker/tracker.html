@@ -1,0 +1,92 @@
+<div class="tracker-page">
+  <!-- Sidebar -->
+  <div class="tracker-sidebar">
+    <div class="sidebar-header">
+      <h2>&#9992; Live Tracker</h2>
+      <p class="flight-count">{{ flights().length }} flights in air</p>
+    </div>
+
+    <div class="search-row">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Search callsign or country..."
+        class="search-input"
+        (keyup.enter)="searchFlight()"
+      />
+      <button class="btn-search" (click)="searchFlight()">&#128269;</button>
+    </div>
+
+    @if (loading()) {
+      <div class="status-msg">Loading live flights...</div>
+    }
+    @if (error()) {
+      <div class="error-msg">{{ error() }}</div>
+    }
+    @if (lastUpdated()) {
+      <div class="updated-label">Updated: {{ lastUpdated() }}</div>
+    }
+
+    <button class="btn-refresh" (click)="loadFlights()" [disabled]="loading()">
+      &#8635; Refresh
+    </button>
+
+    <div class="flight-list">
+      @for (f of filteredFlights.slice(0, 80); track f.icao24) {
+        <div
+          class="flight-item"
+          [class.selected]="selectedFlight()?.icao24 === f.icao24"
+          (click)="selectFlight(f)"
+        >
+          <div class="item-row">
+            <span class="item-callsign">{{ f.callsign }}</span>
+            <span class="item-country">{{ f.originCountry }}</span>
+          </div>
+          <div class="item-stats">
+            <span>{{ f.altitude.toLocaleString() }} ft</span>
+            <span>{{ f.velocity }} kts</span>
+            <span>{{ getDirectionLabel(f.heading) }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="map-container">
+    <div id="leaflet-map"></div>
+
+    @if (selectedFlight(); as f) {
+      <div class="flight-detail-overlay">
+        <div class="detail-header">
+          <div>
+            <span class="detail-callsign">{{ f.callsign }}</span>
+            <span class="detail-country">{{ f.originCountry }}</span>
+          </div>
+          <button class="close-detail" (click)="selectedFlight.set(null)">&#10005;</button>
+        </div>
+        <div class="detail-stats">
+          <div class="stat">
+            <div class="stat-val">{{ f.altitude.toLocaleString() }}</div>
+            <div class="stat-lbl">Altitude (ft)</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">{{ f.velocity }}</div>
+            <div class="stat-lbl">Speed (kts)</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">{{ f.heading | number:'1.0-0' }}°</div>
+            <div class="stat-lbl">Heading</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">{{ f.verticalRate > 0 ? '▲' : f.verticalRate < 0 ? '▼' : '—' }}</div>
+            <div class="stat-lbl">V/S</div>
+          </div>
+        </div>
+        <div class="detail-coords">
+          &#128205; {{ f.latitude | number:'1.2-2' }}°, {{ f.longitude | number:'1.2-2' }}°
+        </div>
+      </div>
+    }
+  </div>
+</div>

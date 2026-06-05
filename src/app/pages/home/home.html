@@ -1,0 +1,106 @@
+<div class="home">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Where do you want to fly?</h1>
+      <p>Search hundreds of flights and book at the best price.</p>
+
+      <div class="search-card">
+        @if (searchError) {
+          <div class="search-error">{{ searchError }}</div>
+        }
+        <form [formGroup]="form" (ngSubmit)="onSearch()">
+          <div class="search-grid">
+            <div class="form-group">
+              <label>From</label>
+              <select formControlName="origin" [class.invalid]="form.get('origin')!.invalid && form.get('origin')!.touched">
+                <option value="">Select departure</option>
+                @for (a of airports; track a.code) {
+                  <option [value]="a.code">{{ a.city }} ({{ a.code }})</option>
+                }
+              </select>
+            </div>
+
+            <div class="swap-icon">&#8644;</div>
+
+            <div class="form-group">
+              <label>To</label>
+              <select formControlName="destination" [class.invalid]="form.get('destination')!.invalid && form.get('destination')!.touched">
+                <option value="">Select destination</option>
+                @for (a of airports; track a.code) {
+                  <option [value]="a.code">{{ a.city }} ({{ a.code }})</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" formControlName="date" [min]="today" />
+            </div>
+
+            <div class="form-group">
+              <label>Passengers</label>
+              <input type="number" formControlName="passengers" min="1" max="9" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn-search">
+            <span>&#128269;</span> Search Flights
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="container">
+      <h2>Why fly with SkyBook?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">&#9992;</div>
+          <h3>500+ Airlines</h3>
+          <p>Access to a wide network of global carriers and routes.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128176;</div>
+          <h3>Best Prices</h3>
+          <p>Compare fares and find the cheapest tickets available.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128249;</div>
+          <h3>Live Tracking</h3>
+          <p>Track any flight in real time with live status updates.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128274;</div>
+          <h3>Secure Booking</h3>
+          <p>Your payments and data are always protected.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Routes -->
+  <section class="popular">
+    <div class="container">
+      <h2>Popular Routes</h2>
+      <div class="routes-grid">
+        @for (route of [
+          {from:'New York', to:'London', price:299, img:'ny-london'},
+          {from:'London', to:'Dubai', price:349, img:'london-dubai'},
+          {from:'Dubai', to:'Tokyo', price:449, img:'dubai-tokyo'},
+          {from:'Los Angeles', to:'Sydney', price:599, img:'la-sydney'},
+        ]; track route.from) {
+          <div class="route-card">
+            <div class="route-bg"></div>
+            <div class="route-info">
+              <span class="route-cities">{{ route.from }} → {{ route.to }}</span>
+              <span class="route-price">From ${{ route.price }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,119 @@
+<div class="flights-page">
+  @if (successMessage) {
+    <div class="success-banner">
+      <span>&#10003; {{ successMessage }}</span>
+      <button class="btn-close" (click)="successMessage = ''">&#10005;</button>
+    </div>
+  }
+  @if (cartMessage) {
+    <div class="cart-banner">
+      <span>&#128722; {{ cartMessage }}</span>
+    </div>
+  }
+
+  <div class="flights-layout">
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Refine Search</h3>
+        <form [formGroup]="refineForm" (ngSubmit)="onRefineSearch()">
+          <div class="form-group">
+            <label>From</label>
+            <select formControlName="origin">
+              @for (a of airports; track a.code) {
+                <option [value]="a.code">{{ a.city }} ({{ a.code }})</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>To</label>
+            <select formControlName="destination">
+              @for (a of airports; track a.code) {
+                <option [value]="a.code">{{ a.city }} ({{ a.code }})</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" formControlName="date" [min]="today" />
+          </div>
+          <div class="form-group">
+            <label>Passengers</label>
+            <input type="number" formControlName="passengers" min="1" max="9" />
+          </div>
+          <button type="submit" class="btn-update">Update Search</button>
+        </form>
+
+        <div class="sort-section">
+          <h3>Sort by</h3>
+          <label class="radio-label">
+            <input type="radio" name="sort" [checked]="sortBy === 'price'" (change)="sortBy = 'price'; applySorting()" />
+            Price (lowest first)
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="sort" [checked]="sortBy === 'duration'" (change)="sortBy = 'duration'; applySorting()" />
+            Departure time
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <main class="results">
+      <div class="results-header">
+        @if (flights.length > 0) {
+          <h2>{{ getOriginName() }} &#8594; {{ getDestName() }}</h2>
+          <p>{{ flights.length }} flights &bull; {{ searchParams.passengers }} passenger{{ searchParams.passengers > 1 ? 's' : '' }}</p>
+        } @else {
+          <h2>No flights found</h2>
+          <p>Try adjusting your search.</p>
+        }
+      </div>
+
+      @for (flight of flights; track flight.id) {
+        <div class="flight-card" [class.booked]="bookedFlightId === flight.id">
+          <div class="flight-airline">
+            <div class="airline-badge">{{ flight.flightNumber.slice(0,2) }}</div>
+            <div>
+              <div class="airline-name">{{ flight.airline }}</div>
+              <div class="flight-number">{{ flight.flightNumber }}</div>
+            </div>
+          </div>
+
+          <div class="flight-times">
+            <div class="time-block">
+              <div class="time">{{ flight.departureTime }}</div>
+              <div class="city-code">{{ flight.origin.code }}</div>
+            </div>
+            <div class="flight-path">
+              <div class="duration">{{ flight.duration }}</div>
+              <div class="path-line">
+                <span class="dot"></span>
+                <span class="line"></span>
+                @if (flight.stops > 0) { <span class="stop-dot"></span><span class="line"></span> }
+                <span class="plane-icon">&#9992;</span>
+              </div>
+              <div class="stops-label">{{ flight.stops === 0 ? 'Nonstop' : flight.stops + ' stop' }}</div>
+            </div>
+            <div class="time-block">
+              <div class="time">{{ flight.arrivalTime }}</div>
+              <div class="city-code">{{ flight.destination.code }}</div>
+            </div>
+          </div>
+
+          <div class="flight-price">
+            <div class="price">${{ flight.price }}</div>
+            <div class="price-note">total · {{ searchParams.passengers }} pax</div>
+            <div class="seats-left">{{ flight.seatsAvailable }} seats left</div>
+            @if (bookedFlightId === flight.id) {
+              <span class="booked-label">&#10003; Booked</span>
+            } @else {
+              <div class="action-buttons">
+                <button class="btn-cart" (click)="addToCart(flight)">+ Cart</button>
+                <button class="btn-book" (click)="bookFlight(flight)">Book Now</button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </main>
+  </div>
+</div>

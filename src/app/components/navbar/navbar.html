@@ -1,0 +1,33 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a routerLink="/home" class="nav-brand">
+      <span class="brand-icon">&#9992;</span>
+      <span class="brand-name">SkyBook</span>
+    </a>
+
+    <div class="nav-links">
+      <a routerLink="/home"    routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
+      <a routerLink="/tracker" routerLinkActive="active">Live Tracker</a>
+      <a routerLink="/about"   routerLinkActive="active">About</a>
+      @if (auth.isLoggedIn()) {
+        <a routerLink="/my-bookings" routerLinkActive="active">My Bookings</a>
+      }
+    </div>
+
+    <div class="nav-auth">
+      @if (auth.isLoggedIn()) {
+        <a routerLink="/cart" class="btn-cart-icon">
+          &#128722;
+          @if (cartService.count() > 0) {
+            <span class="cart-badge">{{ cartService.count() }}</span>
+          }
+        </a>
+        <span class="user-name">{{ auth.currentUser()?.firstName }}</span>
+        <button class="btn-logout" (click)="logout()">Logout</button>
+      } @else {
+        <a routerLink="/login"    class="btn-login">Login</a>
+        <a routerLink="/register" class="btn-register">Register</a>
+      }
+    </div>
+  </div>
+</nav>

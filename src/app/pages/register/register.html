@@ -1,0 +1,70 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span>&#9992;</span> SkyBook
+    </div>
+
+    <h1>Create account</h1>
+    <p class="auth-subtitle">Join SkyBook and start booking flights</p>
+
+    @if (error) {
+      <div class="alert-error">{{ error }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>First name</label>
+          <input type="text" formControlName="firstName" placeholder="John"
+            [class.invalid]="f.firstName.invalid && f.firstName.touched" />
+          @if (f.firstName.invalid && f.firstName.touched) {
+            <span class="field-error">Min. 2 characters</span>
+          }
+        </div>
+        <div class="form-group">
+          <label>Last name</label>
+          <input type="text" formControlName="lastName" placeholder="Doe"
+            [class.invalid]="f.lastName.invalid && f.lastName.touched" />
+          @if (f.lastName.invalid && f.lastName.touched) {
+            <span class="field-error">Min. 2 characters</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" formControlName="email" placeholder="you@example.com"
+          [class.invalid]="f.email.invalid && f.email.touched" />
+        @if (f.email.invalid && f.email.touched) {
+          <span class="field-error">Valid email required</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" formControlName="password" placeholder="••••••••"
+          [class.invalid]="f.password.invalid && f.password.touched" />
+        @if (f.password.invalid && f.password.touched) {
+          <span class="field-error">Minimum 6 characters</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Confirm password</label>
+        <input type="password" formControlName="confirmPassword" placeholder="••••••••"
+          [class.invalid]="(f.confirmPassword.touched && form.errors?.['mismatch'])" />
+        @if (f.confirmPassword.touched && form.errors?.['mismatch']) {
+          <span class="field-error">Passwords do not match</span>
+        }
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        {{ loading ? 'Creating account...' : 'Create Account' }}
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      Already have an account? <a routerLink="/login">Sign in</a>
+    </p>
+  </div>
+</div>

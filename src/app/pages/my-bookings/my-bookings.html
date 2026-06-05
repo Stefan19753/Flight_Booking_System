@@ -1,0 +1,125 @@
+<div class="bookings-page">
+  <div class="page-header">
+    <h1>My Bookings</h1>
+    <p>Manage your flight reservations</p>
+  </div>
+
+  <div class="container">
+    @if (loading) {
+      <div class="loading-state">Loading bookings...</div>
+    } @else if (error) {
+      <div class="error-state">{{ error }}</div>
+    } @else if (bookings.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">&#9992;</div>
+        <h3>No bookings yet</h3>
+        <p>You haven't booked any flights.</p>
+        <a routerLink="/home" class="btn-primary">Search Flights</a>
+      </div>
+    }
+
+    @if (confirmed.length > 0) {
+      <h2 class="section-title">Active Bookings ({{ confirmed.length }})</h2>
+      @for (b of confirmed; track b.id) {
+        <div class="booking-card confirmed">
+          <div class="booking-status-bar"></div>
+          <div class="booking-body">
+            <div class="booking-route">
+              <div class="route-city">
+                <div class="city-code">{{ b.origin_code }}</div>
+                <div class="city-name">{{ b.origin_city }}</div>
+                <div class="flight-time">{{ b.departure_time }}</div>
+              </div>
+              <div class="route-middle">
+                <div class="flight-num-badge">{{ b.flight_number }}</div>
+                <div class="route-arrow">&#9992;</div>
+                <div class="duration-label">{{ b.duration }}</div>
+              </div>
+              <div class="route-city right">
+                <div class="city-code">{{ b.destination_code }}</div>
+                <div class="city-name">{{ b.destination_city }}</div>
+                <div class="flight-time">{{ b.arrival_time }}</div>
+              </div>
+            </div>
+
+            <div class="booking-details">
+              <div class="detail-item">
+                <span class="detail-label">Booking ID</span>
+                <span class="detail-value mono">#{{ b.id }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Seat</span>
+                <span class="detail-value seat">{{ b.seat }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Passengers</span>
+                <span class="detail-value">{{ b.passengers }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Total Paid</span>
+                <span class="detail-value price">${{ b.price }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Booked On</span>
+                <span class="detail-value">{{ b.booked_at | date:'MMM d, y' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Status</span>
+                <span class="badge-confirmed">Confirmed</span>
+              </div>
+            </div>
+
+            @if (cancelConfirmId === b.id) {
+              <div class="cancel-confirm">
+                <span>Are you sure you want to cancel this booking?</span>
+                <div class="cancel-actions">
+                  <button class="btn-danger" (click)="doCancel(b.id)">Yes, cancel</button>
+                  <button class="btn-secondary" (click)="cancelConfirmId = 0">Keep booking</button>
+                </div>
+              </div>
+            } @else {
+              <div class="booking-actions">
+                <button class="btn-cancel" (click)="confirmCancel(b.id)">Cancel Booking</button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+
+    @if (cancelled.length > 0) {
+      <h2 class="section-title cancelled-title">Cancelled ({{ cancelled.length }})</h2>
+      @for (b of cancelled; track b.id) {
+        <div class="booking-card cancelled">
+          <div class="booking-status-bar"></div>
+          <div class="booking-body">
+            <div class="booking-route faded">
+              <div class="route-city">
+                <div class="city-code">{{ b.origin_code }}</div>
+                <div class="city-name">{{ b.origin_city }}</div>
+              </div>
+              <div class="route-middle">
+                <div class="flight-num-badge">{{ b.flight_number }}</div>
+                <div class="route-arrow">&#9992;</div>
+              </div>
+              <div class="route-city right">
+                <div class="city-code">{{ b.destination_code }}</div>
+                <div class="city-name">{{ b.destination_city }}</div>
+              </div>
+            </div>
+            <div class="booking-details">
+              <div class="detail-item">
+                <span class="detail-label">Booking ID</span>
+                <span class="detail-value mono">#{{ b.id }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Status</span>
+                <span class="badge-cancelled">Cancelled</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
