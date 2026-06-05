@@ -9,7 +9,6 @@ export default async function handler() {
       headers: {
         Authorization: 'Basic ' + btoa(`${username}:${password}`),
       },
-      signal: AbortSignal.timeout(20000),
     });
 
     if (!resp.ok) {
