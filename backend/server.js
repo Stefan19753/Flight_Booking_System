@@ -5,11 +5,17 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:4200').split(',');
+const allowedOrigins = [
+  'http://localhost:4200',
+  ...((process.env.FRONTEND_URL || '').split(',').filter(Boolean)),
+];
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
+    if (!origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+    callback(null, false);
   },
   credentials: true,
 }));
