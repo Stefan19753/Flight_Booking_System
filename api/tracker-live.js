@@ -2,7 +2,7 @@ export const config = { runtime: 'edge' };
 
 export default async function handler() {
   try {
-    const resp = await fetch('https://api.adsb.lol/v2/ladd');
+    const resp = await fetch('https://opensky-network.org/api/states/all');
 
     if (!resp.ok) {
       const text = await resp.text();
@@ -12,22 +12,22 @@ export default async function handler() {
     }
 
     const data = await resp.json();
-    const aircraft = data.ac ?? [];
+    const states = data.states ?? [];
 
-    const flights = aircraft
-      .filter(a => a.flight?.trim() && a.lon != null && a.lat != null && !a.ground)
+    const flights = states
+      .filter(s => s[1]?.trim() && s[5] !== null && s[6] !== null && !s[8])
       .slice(0, 300)
-      .map(a => ({
-        icao24:        a.hex,
-        callsign:      a.flight?.trim(),
-        originCountry: a.r ?? '',
-        longitude:     a.lon,
-        latitude:      a.lat,
-        altitude:      a.alt_baro ? Math.round(a.alt_baro) : 0,
-        onGround:      !!a.ground,
-        velocity:      a.gs ? Math.round(a.gs) : 0,
-        heading:       a.track ?? 0,
-        verticalRate:  a.baro_rate ?? 0,
+      .map(s => ({
+        icao24:        s[0],
+        callsign:      s[1].trim(),
+        originCountry: s[2],
+        longitude:     s[5],
+        latitude:      s[6],
+        altitude:      s[7] ? Math.round(s[7] * 3.281) : 0,
+        onGround:      s[8],
+        velocity:      s[9] ? Math.round(s[9] * 1.944) : 0,
+        heading:       s[10] ?? 0,
+        verticalRate:  s[11] ?? 0,
       }));
 
     return new Response(JSON.stringify(flights), {
