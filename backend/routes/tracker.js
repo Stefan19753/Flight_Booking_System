@@ -13,6 +13,10 @@ router.get('/live', async (req, res) => {
   try {
     const resp = await axios.get('https://opensky-network.org/api/states/all', {
       timeout: 8_000,
+      auth: {
+        username: process.env.OPENSKY_USERNAME,
+        password: process.env.OPENSKY_PASSWORD,
+      },
     });
     const states = resp.data.states ?? [];
 
