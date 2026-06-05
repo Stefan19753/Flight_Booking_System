@@ -12,7 +12,7 @@ router.get('/live', async (req, res) => {
   }
   try {
     const resp = await axios.get('https://opensky-network.org/api/states/all', {
-      timeout: 15_000,
+      timeout: 8_000,
     });
     const states = resp.data.states ?? [];
 
