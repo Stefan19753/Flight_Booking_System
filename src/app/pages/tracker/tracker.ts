@@ -1,7 +1,8 @@
 import { Component, inject, OnDestroy, AfterViewInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 declare var L: any;
 
@@ -64,7 +65,10 @@ export class Tracker implements AfterViewInit, OnDestroy {
   loadFlights() {
     this.loading.set(true);
     this.error.set('');
-    this.http.get<any>('https://opensky-network.org/api/states/all').subscribe({
+    const headers = environment.openskyUsername
+      ? new HttpHeaders({ Authorization: 'Basic ' + btoa(`${environment.openskyUsername}:${environment.openskyPassword}`) })
+      : new HttpHeaders();
+    this.http.get<any>('https://opensky-network.org/api/states/all', { headers }).subscribe({
       next: (resp) => {
         const states: any[] = resp.states ?? [];
         const flights: RealFlight[] = states
