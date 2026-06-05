@@ -1,8 +1,7 @@
-import { Component, inject, OnInit, OnDestroy, AfterViewInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, AfterViewInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
 
 declare var L: any;
 
@@ -27,7 +26,6 @@ export interface RealFlight {
 })
 export class Tracker implements AfterViewInit, OnDestroy {
   private http = inject(HttpClient);
-  private auth = inject(AuthService);
 
   private map: any;
   private markerLayer: any;
@@ -66,15 +64,31 @@ export class Tracker implements AfterViewInit, OnDestroy {
   loadFlights() {
     this.loading.set(true);
     this.error.set('');
-    this.http.get<RealFlight[]>(`${this.auth.API}/tracker/live`).subscribe({
-      next: (data) => {
-        this.flights.set(data);
-        this.renderMarkers(data);
+    this.http.get<any>('https://opensky-network.org/api/states/all').subscribe({
+      next: (resp) => {
+        const states: any[] = resp.states ?? [];
+        const flights: RealFlight[] = states
+          .filter((s: any) => s[1]?.trim() && s[5] !== null && s[6] !== null && !s[8])
+          .slice(0, 300)
+          .map((s: any) => ({
+            icao24:        s[0],
+            callsign:      s[1].trim(),
+            originCountry: s[2],
+            longitude:     s[5],
+            latitude:      s[6],
+            altitude:      s[7] ? Math.round(s[7] * 3.281) : 0,
+            onGround:      s[8],
+            velocity:      s[9] ? Math.round(s[9] * 1.944) : 0,
+            heading:       s[10] ?? 0,
+            verticalRate:  s[11] ?? 0,
+          }));
+        this.flights.set(flights);
+        this.renderMarkers(flights);
         this.loading.set(false);
         this.lastUpdated.set(new Date().toLocaleTimeString());
       },
       error: () => {
-        this.error.set('Cannot reach backend. Start the backend server and try again.');
+        this.error.set('Could not load live flights. Please try again shortly.');
         this.loading.set(false);
       },
     });
