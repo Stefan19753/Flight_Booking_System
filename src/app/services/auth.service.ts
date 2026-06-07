@@ -49,6 +49,14 @@ export class AuthService {
     localStorage.removeItem(this.USER_KEY);
   }
 
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.API}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string): Observable<any> {
+    return this.http.post(`${this.API}/auth/reset-password`, { token, password });
+  }
+
   isLoggedIn(): boolean {
     return this.currentUser() !== null && this.token() !== null;
   }
