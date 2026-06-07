@@ -23,6 +23,15 @@
   font-size: 1rem;
 }
 
+.cart-banner {
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .flights-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -35,15 +44,15 @@
 /* Sidebar */
 .sidebar-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 1.5rem;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
   position: sticky;
   top: 80px;
 }
 
 .sidebar-card h3 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 1rem;
@@ -55,11 +64,11 @@
 
 label {
   display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: #6b7280;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   margin-bottom: 0.3rem;
 }
 
@@ -67,12 +76,13 @@ select, input[type="date"], input[type="number"] {
   width: 100%;
   padding: 0.55rem 0.75rem;
   border: 1.5px solid #e5e7eb;
-  border-radius: 7px;
+  border-radius: 8px;
   font-size: 0.9rem;
   color: #1a1a1a;
   background: #fff;
   outline: none;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 select:focus, input:focus {
@@ -85,7 +95,7 @@ select:focus, input:focus {
   background: #003580;
   color: #fff;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -93,9 +103,7 @@ select:focus, input:focus {
   margin-top: 0.25rem;
 }
 
-.btn-update:hover {
-  background: #002766;
-}
+.btn-update:hover { background: #002766; }
 
 .sort-section {
   margin-top: 1.5rem;
@@ -107,7 +115,7 @@ select:focus, input:focus {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: #374151;
   margin-bottom: 0.5rem;
   cursor: pointer;
@@ -116,7 +124,7 @@ select:focus, input:focus {
   font-weight: 500;
 }
 
-/* Results */
+/* Results header */
 .results-header {
   margin-bottom: 1.25rem;
 }
@@ -133,29 +141,100 @@ select:focus, input:focus {
   margin-top: 0.2rem;
 }
 
+/* Round-trip header */
+.round-trip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.rt-badge {
+  background: #003580;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.rt-route {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.rt-info {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Round-trip sections */
+.rt-section {
+  margin-bottom: 2rem;
+}
+
+.rt-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.rt-leg-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rt-leg-badge.outbound {
+  background: #eef4ff;
+  color: #003580;
+}
+
+.rt-leg-badge.return {
+  background: #f0fdf4;
+  color: #166534;
+}
+
 /* Flight Card */
 .flight-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 1.25rem 1.5rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  margin-bottom: 0.875rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   display: grid;
   grid-template-columns: 160px 1fr auto;
   align-items: center;
   gap: 1.5rem;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
   border: 2px solid transparent;
 }
 
 .flight-card:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.11);
   transform: translateY(-2px);
 }
 
 .flight-card.booked {
   border-color: #86efac;
   background: #f0fdf4;
+}
+
+.flight-card.selected {
+  border-color: #003580;
+  background: #f8faff;
 }
 
 .flight-airline {
@@ -167,7 +246,7 @@ select:focus, input:focus {
 .airline-badge {
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, #003580, #009fe3);
+  background: linear-gradient(135deg, #003580, #0077c8);
   color: #fff;
   border-radius: 10px;
   display: flex;
@@ -189,7 +268,6 @@ select:focus, input:focus {
   color: #6b7280;
 }
 
-/* Times */
 .flight-times {
   display: flex;
   align-items: center;
@@ -266,7 +344,7 @@ select:focus, input:focus {
   margin-top: 0.2rem;
 }
 
-/* Price */
+/* Price column */
 .flight-price {
   text-align: right;
   min-width: 130px;
@@ -289,15 +367,6 @@ select:focus, input:focus {
   color: #ef4444;
   font-weight: 600;
   margin-bottom: 0.6rem;
-}
-
-.cart-banner {
-  background: #eff6ff;
-  border-bottom: 1px solid #bfdbfe;
-  color: #1e40af;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
 }
 
 .action-buttons {
@@ -339,6 +408,28 @@ select:focus, input:focus {
   transform: translateY(-1px);
 }
 
+.btn-select {
+  width: 100%;
+  padding: 0.55rem 1rem;
+  background: #fff;
+  color: #003580;
+  border: 2px solid #003580;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-select:hover {
+  background: #eef4ff;
+}
+
+.btn-select.selected {
+  background: #003580;
+  color: #fff;
+}
+
 .booked-label {
   display: inline-block;
   background: #dcfce7;
@@ -349,6 +440,69 @@ select:focus, input:focus {
   font-weight: 700;
   width: 100%;
   text-align: center;
+}
+
+/* Booking summary bar */
+.booking-summary {
+  position: sticky;
+  bottom: 1.5rem;
+  background: #003580;
+  color: #fff;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 8px 32px rgba(0,53,128,0.4);
+  margin-top: 1rem;
+  z-index: 10;
+}
+
+.summary-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-price {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.summary-detail {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.btn-book-both {
+  padding: 0.8rem 2rem;
+  background: #fcd12a;
+  color: #003580;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.btn-book-both:hover:not(:disabled) {
+  background: #f5c600;
+  transform: translateY(-1px);
+}
+
+.btn-book-both:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 @media (max-width: 900px) {
@@ -366,5 +520,12 @@ select:focus, input:focus {
   }
   .flight-price {
     text-align: left;
+  }
+  .booking-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn-book-both {
+    width: 100%;
   }
 }

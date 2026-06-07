@@ -6,9 +6,7 @@
     </div>
   }
   @if (cartMessage) {
-    <div class="cart-banner">
-      <span>&#128722; {{ cartMessage }}</span>
-    </div>
+    <div class="cart-banner">{{ cartMessage }}</div>
   }
 
   <div class="flights-layout">
@@ -58,62 +56,183 @@
     </aside>
 
     <main class="results">
-      <div class="results-header">
-        @if (flights.length > 0) {
-          <h2>{{ getOriginName() }} &#8594; {{ getDestName() }}</h2>
-          <p>{{ flights.length }} flights &bull; {{ searchParams.passengers }} passenger{{ searchParams.passengers > 1 ? 's' : '' }}</p>
-        } @else {
-          <h2>No flights found</h2>
-          <p>Try adjusting your search.</p>
-        }
-      </div>
 
-      @for (flight of flights; track flight.id) {
-        <div class="flight-card" [class.booked]="bookedFlightId === flight.id">
-          <div class="flight-airline">
-            <div class="airline-badge">{{ flight.flightNumber.slice(0,2) }}</div>
-            <div>
-              <div class="airline-name">{{ flight.airline }}</div>
-              <div class="flight-number">{{ flight.flightNumber }}</div>
-            </div>
-          </div>
-
-          <div class="flight-times">
-            <div class="time-block">
-              <div class="time">{{ flight.departureTime }}</div>
-              <div class="city-code">{{ flight.origin.code }}</div>
-            </div>
-            <div class="flight-path">
-              <div class="duration">{{ flight.duration }}</div>
-              <div class="path-line">
-                <span class="dot"></span>
-                <span class="line"></span>
-                @if (flight.stops > 0) { <span class="stop-dot"></span><span class="line"></span> }
-                <span class="plane-icon">&#9992;</span>
-              </div>
-              <div class="stops-label">{{ flight.stops === 0 ? 'Nonstop' : flight.stops + ' stop' }}</div>
-            </div>
-            <div class="time-block">
-              <div class="time">{{ flight.arrivalTime }}</div>
-              <div class="city-code">{{ flight.destination.code }}</div>
-            </div>
-          </div>
-
-          <div class="flight-price">
-            <div class="price">${{ flight.price }}</div>
-            <div class="price-note">total · {{ searchParams.passengers }} pax</div>
-            <div class="seats-left">{{ flight.seatsAvailable }} seats left</div>
-            @if (bookedFlightId === flight.id) {
-              <span class="booked-label">&#10003; Booked</span>
-            } @else {
-              <div class="action-buttons">
-                <button class="btn-cart" (click)="addToCart(flight)">+ Cart</button>
-                <button class="btn-book" (click)="bookFlight(flight)">Book Now</button>
-              </div>
-            }
-          </div>
+      <!-- One-way results -->
+      @if (!isRoundTrip) {
+        <div class="results-header">
+          @if (flights.length > 0) {
+            <h2>{{ getOriginName() }} &rarr; {{ getDestName() }}</h2>
+            <p>{{ flights.length }} flights &bull; {{ searchParams.passengers }} passenger{{ searchParams.passengers > 1 ? 's' : '' }}</p>
+          } @else {
+            <h2>No flights found</h2>
+            <p>Try adjusting your search.</p>
+          }
         </div>
+
+        @for (flight of flights; track flight.id) {
+          <div class="flight-card" [class.booked]="bookedFlightId === flight.id">
+            <div class="flight-airline">
+              <div class="airline-badge">{{ flight.flightNumber.slice(0,2) }}</div>
+              <div>
+                <div class="airline-name">{{ flight.airline }}</div>
+                <div class="flight-number">{{ flight.flightNumber }}</div>
+              </div>
+            </div>
+
+            <div class="flight-times">
+              <div class="time-block">
+                <div class="time">{{ flight.departureTime }}</div>
+                <div class="city-code">{{ flight.origin.code }}</div>
+              </div>
+              <div class="flight-path">
+                <div class="duration">{{ flight.duration }}</div>
+                <div class="path-line">
+                  <span class="dot"></span>
+                  <span class="line"></span>
+                  @if (flight.stops > 0) { <span class="stop-dot"></span><span class="line"></span> }
+                  <span class="plane-icon">&#9992;</span>
+                </div>
+                <div class="stops-label">{{ flight.stops === 0 ? 'Nonstop' : flight.stops + ' stop' }}</div>
+              </div>
+              <div class="time-block">
+                <div class="time">{{ flight.arrivalTime }}</div>
+                <div class="city-code">{{ flight.destination.code }}</div>
+              </div>
+            </div>
+
+            <div class="flight-price">
+              <div class="price">${{ flight.price }}</div>
+              <div class="price-note">total · {{ searchParams.passengers }} pax</div>
+              <div class="seats-left">{{ flight.seatsAvailable }} seats left</div>
+              @if (bookedFlightId === flight.id) {
+                <span class="booked-label">&#10003; Booked</span>
+              } @else {
+                <div class="action-buttons">
+                  <button class="btn-cart" (click)="addToCart(flight)">+ Cart</button>
+                  <button class="btn-book" (click)="bookFlight(flight)">Book Now</button>
+                </div>
+              }
+            </div>
+          </div>
+        }
       }
+
+      <!-- Round-trip results -->
+      @if (isRoundTrip) {
+        <div class="round-trip-header">
+          <span class="rt-badge">Round Trip</span>
+          <span class="rt-route">{{ getOriginName() }} &harr; {{ getDestName() }}</span>
+          <span class="rt-info">{{ searchParams.passengers }} passenger{{ searchParams.passengers > 1 ? 's' : '' }} &bull; Select one flight from each section</span>
+        </div>
+
+        <div class="rt-section">
+          <div class="rt-section-title">
+            <span class="rt-leg-badge outbound">Outbound</span>
+            {{ getOriginName() }} &rarr; {{ getDestName() }} &bull; {{ searchParams.date }}
+          </div>
+          @for (flight of flights; track flight.id) {
+            <div class="flight-card" [class.selected]="selectedOutbound?.id === flight.id">
+              <div class="flight-airline">
+                <div class="airline-badge">{{ flight.flightNumber.slice(0,2) }}</div>
+                <div>
+                  <div class="airline-name">{{ flight.airline }}</div>
+                  <div class="flight-number">{{ flight.flightNumber }}</div>
+                </div>
+              </div>
+              <div class="flight-times">
+                <div class="time-block">
+                  <div class="time">{{ flight.departureTime }}</div>
+                  <div class="city-code">{{ flight.origin.code }}</div>
+                </div>
+                <div class="flight-path">
+                  <div class="duration">{{ flight.duration }}</div>
+                  <div class="path-line">
+                    <span class="dot"></span>
+                    <span class="line"></span>
+                    @if (flight.stops > 0) { <span class="stop-dot"></span><span class="line"></span> }
+                    <span class="plane-icon">&#9992;</span>
+                  </div>
+                  <div class="stops-label">{{ flight.stops === 0 ? 'Nonstop' : flight.stops + ' stop' }}</div>
+                </div>
+                <div class="time-block">
+                  <div class="time">{{ flight.arrivalTime }}</div>
+                  <div class="city-code">{{ flight.destination.code }}</div>
+                </div>
+              </div>
+              <div class="flight-price">
+                <div class="price">${{ flight.price }}</div>
+                <div class="price-note">{{ searchParams.passengers }} pax</div>
+                <div class="seats-left">{{ flight.seatsAvailable }} seats left</div>
+                <button class="btn-select" [class.selected]="selectedOutbound?.id === flight.id" (click)="selectOutbound(flight)">
+                  {{ selectedOutbound?.id === flight.id ? '&#10003; Selected' : 'Select' }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="rt-section">
+          <div class="rt-section-title">
+            <span class="rt-leg-badge return">Return</span>
+            {{ getDestName() }} &rarr; {{ getOriginName() }} &bull; {{ returnDate }}
+          </div>
+          @for (flight of returnFlights; track flight.id) {
+            <div class="flight-card" [class.selected]="selectedReturn?.id === flight.id">
+              <div class="flight-airline">
+                <div class="airline-badge">{{ flight.flightNumber.slice(0,2) }}</div>
+                <div>
+                  <div class="airline-name">{{ flight.airline }}</div>
+                  <div class="flight-number">{{ flight.flightNumber }}</div>
+                </div>
+              </div>
+              <div class="flight-times">
+                <div class="time-block">
+                  <div class="time">{{ flight.departureTime }}</div>
+                  <div class="city-code">{{ flight.origin.code }}</div>
+                </div>
+                <div class="flight-path">
+                  <div class="duration">{{ flight.duration }}</div>
+                  <div class="path-line">
+                    <span class="dot"></span>
+                    <span class="line"></span>
+                    @if (flight.stops > 0) { <span class="stop-dot"></span><span class="line"></span> }
+                    <span class="plane-icon">&#9992;</span>
+                  </div>
+                  <div class="stops-label">{{ flight.stops === 0 ? 'Nonstop' : flight.stops + ' stop' }}</div>
+                </div>
+                <div class="time-block">
+                  <div class="time">{{ flight.arrivalTime }}</div>
+                  <div class="city-code">{{ flight.destination.code }}</div>
+                </div>
+              </div>
+              <div class="flight-price">
+                <div class="price">${{ flight.price }}</div>
+                <div class="price-note">{{ searchParams.passengers }} pax</div>
+                <div class="seats-left">{{ flight.seatsAvailable }} seats left</div>
+                <button class="btn-select" [class.selected]="selectedReturn?.id === flight.id" (click)="selectReturn(flight)">
+                  {{ selectedReturn?.id === flight.id ? '&#10003; Selected' : 'Select' }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (bothSelected) {
+          <div class="booking-summary">
+            <div class="summary-info">
+              <span class="summary-label">Round trip total</span>
+              <span class="summary-price">${{ totalRoundTripPrice }}</span>
+              <span class="summary-detail">
+                {{ selectedOutbound!.flightNumber }} + {{ selectedReturn!.flightNumber }} &bull; {{ searchParams.passengers }} pax
+              </span>
+            </div>
+            <button class="btn-book-both" [disabled]="bookingBoth" (click)="bookBoth()">
+              {{ bookingBoth ? 'Booking...' : 'Book Both Flights' }}
+            </button>
+          </div>
+        }
+      }
+
     </main>
   </div>
 </div>
