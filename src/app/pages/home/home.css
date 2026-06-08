@@ -325,7 +325,7 @@ select.invalid {
 .dest-bcn { background: linear-gradient(135deg, #c0392b 0%, #e67e22 100%); background-image: url('/images/barcelona.jpg'); background-size: cover; background-position: center; }
 .dest-nrt { background: linear-gradient(135deg, #8e2de2 0%, #e91e8c 100%); background-image: url('/images/tokyo.jpg'); background-size: cover; background-position: center; }
 .dest-lhr { background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); background-image: url('/images/london.jpg'); background-size: cover; background-position: center; }
-.dest-dxb { background: linear-gradient(135deg, #b8860b 0%, #ff8c00 100%); background-image: url('/images/dubai.jpg'); background-size: cover; background-position: center top; }
+.dest-dxb { background: linear-gradient(135deg, #b8860b 0%, #ff8c00 100%); background-image: url('/images/dubai.jpg'); background-size: cover; background-position: center 40%; }
 .dest-cdg { background: linear-gradient(135deg, #6a0572 0%, #c0392b 100%); background-image: url('/images/paris.jpg'); background-size: cover; background-position: center bottom; }
 .dest-sin { background: linear-gradient(135deg, #134e5e 0%, #71b280 100%); background-image: url('/images/singapore.jpg'); background-size: cover; background-position: center; }
 .dest-syd { background: linear-gradient(135deg, #0077c8 0%, #ff6b6b 100%); background-image: url('/images/sydney.jpg'); background-size: cover; background-position: center; }
