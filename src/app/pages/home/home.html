@@ -110,18 +110,26 @@
         <h2>Popular Destinations</h2>
         <p>Click a city to start your search</p>
       </div>
-      <div class="destinations-grid">
-        @for (dest of destinations; track dest.code) {
-          <div class="dest-card dest-{{ dest.code | lowercase }}" (click)="selectDestination(dest.code)">
-            <div class="dest-overlay"></div>
-            <div class="dest-info">
-              <span class="dest-city">{{ dest.city }}</span>
-              <span class="dest-country">{{ dest.country }}</span>
+      @defer (on timer(600ms)) {
+        <div class="destinations-grid">
+          @for (dest of destinations; track dest.code) {
+            <div class="dest-card dest-{{ dest.code | lowercase }}" (click)="selectDestination(dest.code)">
+              <div class="dest-overlay"></div>
+              <div class="dest-info">
+                <span class="dest-city">{{ dest.city }}</span>
+                <span class="dest-country">{{ dest.country }}</span>
+              </div>
+              <div class="dest-search-hint">Search flights</div>
             </div>
-            <div class="dest-search-hint">Search flights</div>
-          </div>
-        }
-      </div>
+          }
+        </div>
+      } @placeholder {
+        <div class="destinations-grid">
+          @for (i of [1,2,3,4,5,6,7,8]; track i) {
+            <div class="dest-card dest-skeleton"></div>
+          }
+        </div>
+      }
     </div>
   </section>
 

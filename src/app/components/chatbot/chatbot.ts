@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, inject, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ChatService, ChatMessage } from '../../services/chat.service';
@@ -26,6 +26,7 @@ export class ChatbotComponent implements AfterViewChecked {
 
   private chatService = inject(ChatService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   open = false;
   loading = false;
@@ -43,10 +44,10 @@ export class ChatbotComponent implements AfterViewChecked {
   toggle() {
     this.open = !this.open;
     if (this.open && this.messages.length === 0) {
-      this.messages.push({
+      this.messages = [{
         role: 'assistant',
         content: "Hi! I'm SkyBook's travel assistant. Tell me where you want to go or what kind of trip you're after, and I'll find the best options for you.",
-      });
+      }];
     }
   }
 
@@ -59,23 +60,26 @@ export class ChatbotComponent implements AfterViewChecked {
     const text = this.input.trim();
     if (!text || this.loading) return;
     this.input = '';
-    this.messages.push({ role: 'user', content: text });
+    this.messages = [...this.messages, { role: 'user', content: text }];
     this.loading = true;
     this.needsScroll = true;
+    this.cdr.detectChanges();
 
     const apiMessages: ChatMessage[] = this.messages.map(({ role, content }) => ({ role, content }));
 
     this.chatService.send(apiMessages).subscribe({
       next: res => {
         const destCodes = this.extractCodes(res.reply);
-        this.messages.push({ role: 'assistant', content: res.reply, destCodes });
+        this.messages = [...this.messages, { role: 'assistant', content: res.reply, destCodes }];
         this.loading = false;
         this.needsScroll = true;
+        this.cdr.detectChanges();
       },
       error: () => {
-        this.messages.push({ role: 'assistant', content: "Sorry, I'm having trouble connecting right now. Please try again." });
+        this.messages = [...this.messages, { role: 'assistant', content: "Sorry, I'm having trouble connecting right now. Please try again." }];
         this.loading = false;
         this.needsScroll = true;
+        this.cdr.detectChanges();
       },
     });
   }
