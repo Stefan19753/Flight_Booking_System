@@ -5,10 +5,11 @@ import { BookingService } from '../../services/booking.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-flights',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './flights.html',
   styleUrl: './flights.css'
 })
@@ -18,7 +19,7 @@ export class Flights implements OnInit {
   private flightService  = inject(FlightService);
   private bookingService = inject(BookingService);
   private cartService    = inject(CartService);
-  private auth           = inject(AuthService);
+         auth            = inject(AuthService);
   private fb             = inject(FormBuilder);
 
   flights: Flight[]       = [];
@@ -100,6 +101,7 @@ export class Flights implements OnInit {
 
   bookBoth() {
     if (!this.selectedOutbound || !this.selectedReturn) return;
+    if (!this.auth.isLoggedIn()) { this.router.navigate(['/login']); return; }
     this.bookingBoth = true;
     this.bookingService.book(this.toPayload(this.selectedOutbound)).subscribe({
       next: (res1) => {

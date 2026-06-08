@@ -1,4 +1,9 @@
 <div class="flights-page">
+  @if (!auth.isLoggedIn()) {
+    <div class="guest-banner">
+      <span>You're browsing as a guest. <a routerLink="/login" class="guest-login-link">Sign in</a> or <a routerLink="/register" class="guest-login-link">create an account</a> to book flights.</span>
+    </div>
+  }
   @if (successMessage) {
     <div class="success-banner">
       <span>&#10003; {{ successMessage }}</span>

@@ -79,7 +79,6 @@ export class Home implements OnInit {
       this.searchError = 'Origin and destination cannot be the same.';
       return;
     }
-    if (!this.auth.isLoggedIn()) { this.router.navigate(['/login']); return; }
     const { date, returnDate, passengers } = this.form.value;
     const params: Record<string, any> = { origin, destination, date, passengers };
     if (this.tripType === 'round-trip' && returnDate) {
