@@ -10,7 +10,7 @@ export const routes: Routes = [
   { path: 'reset-password',  loadComponent: () => import('./pages/reset-password/reset-password').then(m => m.ResetPassword) },
   { path: 'about',       loadComponent: () => import('./pages/about/about').then(m => m.About) },
   { path: 'flights',     loadComponent: () => import('./pages/flights/flights').then(m => m.Flights) },
-  { path: 'tracker',     loadComponent: () => import('./pages/tracker/tracker').then(m => m.Tracker),     canActivate: [authGuard] },
+  { path: 'tracker',     loadComponent: () => import('./pages/tracker/tracker').then(m => m.Tracker) },
   { path: 'my-bookings', loadComponent: () => import('./pages/my-bookings/my-bookings').then(m => m.MyBookings), canActivate: [authGuard] },
   { path: 'cart',        loadComponent: () => import('./pages/cart/cart').then(m => m.Cart),              canActivate: [authGuard] },
   { path: '**', redirectTo: 'home' },
