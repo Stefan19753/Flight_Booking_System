@@ -83,7 +83,13 @@
       <div class="team-grid">
         @for (member of team; track member.name) {
           <div class="team-card">
-            <div class="avatar">{{ member.avatar }}</div>
+            <div class="avatar">
+              @if (member.img) {
+                <img [src]="member.img" [alt]="member.name" />
+              } @else {
+                {{ member.avatar }}
+              }
+            </div>
             <h3>{{ member.name }}</h3>
             <span class="role-badge">{{ member.role }}</span>
             <p>{{ member.desc }}</p>

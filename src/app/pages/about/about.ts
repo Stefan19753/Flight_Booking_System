@@ -9,9 +9,9 @@ import { RouterLink } from '@angular/router';
 })
 export class About {
   team = [
-    { name: 'Stefan Groza',    role: 'Lead Developer',     avatar: 'SG', desc: 'Full-stack engineer and creator of SkyBook.' },
-    { name: 'Maria Ionescu',   role: 'UX Designer',        avatar: 'MI', desc: 'Designs clean, intuitive flight experiences.' },
-    { name: 'Alexandru Pop',   role: 'Backend Engineer',   avatar: 'AP', desc: 'Builds the APIs that power real-time tracking.' },
-    { name: 'Elena Constantin','role': 'Product Manager',  avatar: 'EC', desc: 'Keeps the team focused on what travelers need.' },
+    { name: 'Stefan Groza',    role: 'Lead Developer',   avatar: 'SG', img: '/images/stefan.jpg',   desc: 'Full-stack engineer and creator of SkyBook.' },
+    { name: 'Stefan Groza',    role: 'UX Designer',      avatar: 'MI', img: '',                      desc: 'Designs clean, intuitive flight experiences.' },
+    { name: 'Stefan Groza',    role: 'Backend Engineer', avatar: 'AP', img: '',                      desc: 'Builds the APIs that power real-time tracking.' },
+    { name: 'Stefan Groza',    role: 'Product Manager',  avatar: 'EC', img: '',                      desc: 'Keeps the team focused on what travelers need.' },
   ];
 }
