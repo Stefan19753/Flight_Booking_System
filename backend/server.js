@@ -26,6 +26,7 @@ app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/cart',     require('./routes/cart'));
 app.use('/api/tracker',  require('./routes/tracker'));
+app.use('/api/chat',     require('./routes/chat'));
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', time: new Date() }));
 

@@ -1,6 +1,6 @@
-import { Component, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { LowerCasePipe } from '@angular/common';
 import { FlightService } from '../../services/flight.service';
 import { AuthService } from '../../services/auth.service';
@@ -11,12 +11,13 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home {
+export class Home implements OnInit {
   @ViewChild('searchCard') searchCard!: ElementRef;
 
   private fb = inject(FormBuilder);
   private flightService = inject(FlightService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   auth = inject(AuthService);
 
   airports = this.flightService.getAirports();
@@ -43,6 +44,14 @@ export class Home {
     returnDate:  [''],
     passengers:  [1, [Validators.required, Validators.min(1), Validators.max(9)]],
   });
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['dest']) {
+        this.form.patchValue({ destination: params['dest'] });
+      }
+    });
+  }
 
   setTripType(type: 'one-way' | 'round-trip') {
     this.tripType = type;
