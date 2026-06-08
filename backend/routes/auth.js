@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const db = require('../db/connection');
+const sql = require('../db/connection');
 
 const mailer = nodemailer.createTransport({
   service: 'gmail',
@@ -16,11 +16,11 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
   try {
-    const { rows: existing } = await db.query('SELECT id FROM users WHERE email = $1', [email]);
+    const existing = await sql('SELECT id FROM users WHERE email = $1', [email]);
     if (existing.length > 0) return res.status(409).json({ error: 'Email already registered' });
 
     const hash = await bcrypt.hash(password, 10);
-    const { rows } = await db.query(
+    const rows = await sql(
       'INSERT INTO users (first_name, last_name, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id',
       [firstName, lastName, email, hash]
     );
@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
   try {
-    const { rows } = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    const rows = await sql('SELECT * FROM users WHERE email = $1', [email]);
     if (rows.length === 0) return res.status(401).json({ error: 'Invalid email or password' });
 
     const user = rows[0];
@@ -61,23 +61,16 @@ router.post('/login', async (req, res) => {
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email is required' });
-
   try {
-    const { rows } = await db.query('SELECT id FROM users WHERE email = $1', [email]);
-    if (rows.length === 0) {
-      return res.json({ success: true });
-    }
+    const rows = await sql('SELECT id FROM users WHERE email = $1', [email]);
+    if (rows.length === 0) return res.json({ success: true });
 
     const token = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 60 * 60 * 1000);
 
-    await db.query(
-      'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3',
-      [token, expires, email]
-    );
+    await sql('UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3', [token, expires, email]);
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-
     await mailer.sendMail({
       from: `"SkyBook" <${process.env.GMAIL_USER}>`,
       to: email,
@@ -91,7 +84,6 @@ router.post('/forgot-password', async (req, res) => {
         </div>
       `,
     });
-
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -103,20 +95,12 @@ router.post('/reset-password', async (req, res) => {
   const { token, password } = req.body;
   if (!token || !password) return res.status(400).json({ error: 'Token and password are required' });
   if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
-
   try {
-    const { rows } = await db.query(
-      'SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > NOW()',
-      [token]
-    );
+    const rows = await sql('SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > NOW()', [token]);
     if (rows.length === 0) return res.status(400).json({ error: 'Invalid or expired reset link' });
 
     const hash = await bcrypt.hash(password, 10);
-    await db.query(
-      'UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2',
-      [hash, rows[0].id]
-    );
-
+    await sql('UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2', [hash, rows[0].id]);
     res.json({ success: true });
   } catch (err) {
     console.error(err);
