@@ -16,14 +16,14 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
   try {
-    const { rows: existing } = await sql.query('SELECT id FROM users WHERE email = $1', [email]);
+    const existing = await sql`SELECT id FROM users WHERE email = ${email}`;
     if (existing.length > 0) return res.status(409).json({ error: 'Email already registered' });
 
     const hash = await bcrypt.hash(password, 10);
-    const { rows } = await sql.query(
-      'INSERT INTO users (first_name, last_name, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id',
-      [firstName, lastName, email, hash]
-    );
+    const rows = await sql`
+      INSERT INTO users (first_name, last_name, email, password_hash)
+      VALUES (${firstName}, ${lastName}, ${email}, ${hash})
+      RETURNING id`;
     res.json({ success: true, userId: rows[0].id });
   } catch (err) {
     console.error(err);
@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
   try {
-    const { rows } = await sql.query('SELECT * FROM users WHERE email = $1', [email]);
+    const rows = await sql`SELECT * FROM users WHERE email = ${email}`;
     if (rows.length === 0) return res.status(401).json({ error: 'Invalid email or password' });
 
     const user = rows[0];
@@ -47,7 +47,6 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-
     res.json({
       token,
       user: { id: user.id, email: user.email, firstName: user.first_name, lastName: user.last_name }
@@ -62,13 +61,13 @@ router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email is required' });
   try {
-    const { rows } = await sql.query('SELECT id FROM users WHERE email = $1', [email]);
+    const rows = await sql`SELECT id FROM users WHERE email = ${email}`;
     if (rows.length === 0) return res.json({ success: true });
 
     const token = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 60 * 60 * 1000);
 
-    await sql.query('UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3', [token, expires, email]);
+    await sql`UPDATE users SET reset_token = ${token}, reset_token_expires = ${expires} WHERE email = ${email}`;
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
     await mailer.sendMail({
@@ -96,11 +95,11 @@ router.post('/reset-password', async (req, res) => {
   if (!token || !password) return res.status(400).json({ error: 'Token and password are required' });
   if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
   try {
-    const { rows } = await sql.query('SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > NOW()', [token]);
+    const rows = await sql`SELECT id FROM users WHERE reset_token = ${token} AND reset_token_expires > NOW()`;
     if (rows.length === 0) return res.status(400).json({ error: 'Invalid or expired reset link' });
 
     const hash = await bcrypt.hash(password, 10);
-    await sql.query('UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2', [hash, rows[0].id]);
+    await sql`UPDATE users SET password_hash = ${hash}, reset_token = NULL, reset_token_expires = NULL WHERE id = ${rows[0].id}`;
     res.json({ success: true });
   } catch (err) {
     console.error(err);
